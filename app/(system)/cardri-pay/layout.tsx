@@ -1,0 +1,109 @@
+"use client";
+import Image from "next/image";
+import Logo from "@/public/assets/signin/Logo.png";
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
+import { useMediaQuery } from "react-responsive";
+
+import { useQuery } from "@tanstack/react-query";
+import { getUsersProfile } from "@/services/users";
+import { useRemoteUserStore } from "@/stores/remoteUser";
+import { useUserStore } from "@/stores/currentUserStore";
+import { useRouter } from "next/navigation";
+import { Providers } from "@/app/provider";
+import DashTopNav2 from "@/components/lib/navigation/DashTopNav2";
+
+export default function SystemLayout2({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const isDesktop = useMediaQuery({ minWidth: 992 });
+  const { setUser } = useRemoteUserStore();
+  const loginUser = useUserStore((state) => state.loginUser);
+  const logoutUser = useUserStore((state) => state.logoutUser);
+  const setRefetchUser = useUserStore((state) => state.setRefetchUser);
+  const router = useRouter();
+
+  const {
+    data: remoteUser,
+    isLoading: isUserLoading,
+    refetch: isRefetch,
+    error,
+  } = useQuery({
+    queryKey: ["Get remote profile"],
+    queryFn: getUsersProfile,
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.log("An error occurred:", error);
+      if (
+        // @ts-ignore
+        error.response?.status === 401 &&
+        // @ts-ignore
+        error.response?.data?.message === "Unauthenticated."
+      ) {
+        logoutUser();
+        router.push("/signin");
+        return;
+      }
+      console.error("An error occurred:", error);
+    }
+
+    if (remoteUser) {
+      // @ts-ignore
+      loginUser(remoteUser.data);
+      // @ts-ignore
+      setUser(remoteUser.data);
+    }
+
+    setRefetchUser(isRefetch);
+  }, [
+    loginUser,
+    remoteUser,
+    error,
+    setUser,
+    isRefetch,
+    logoutUser,
+    router,
+    setRefetchUser,
+  ]);
+
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center">
+        <Image
+          src={Logo}
+          alt="Cardri logo"
+          width={120}
+          height={160}
+          className="animate-pulse"
+        />
+        <p className="animate-pulse font-sora text-lg font-bold text-primary-100 mt-4">
+          Loading...
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <Providers>
+      <Toaster
+        richColors
+        position={`${isDesktop ? "bottom-center" : "top-right"}`}
+      />
+      <div className="grid h-screen min-h-[200px] w-full grid-cols-7 overflow-hidden bg-[#F8F8F8]">
+        <>
+          <main className="relative col-span-7 flex h-screen flex-col overflow-hidden  xl:col-span-7 xl:bg-[#F8F8F8]">
+            <DashTopNav2 />
+            <div className="w-full overflow-x-hidden px-5 md:px-8 lg:px-16">
+              {children}
+            </div>
+          </main>
+        </>
+      </div>
+    </Providers>
+  );
+}
