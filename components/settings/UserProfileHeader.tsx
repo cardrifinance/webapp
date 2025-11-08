@@ -15,7 +15,7 @@ import { useState } from 'react';
 
 export const UserProfileHeader = () => {
   const currentUser = useUserStore((state) => state.user);
-  console.log(currentUser);
+  //  console.log(currentUser);
   const accountDetails = [
     {
       id: currentUser?.bankCode,
@@ -87,7 +87,7 @@ export const UserProfileHeader = () => {
                 @{currentUser?.username}
               </p>
 
-              <span className='flex lg:items-center items-start lg:justify-start justify-center gap-1 font-normal text-[#474256] px-3 py-1 rounded-full mt-3 text-xs font-inter'>
+              <span className='flex items-center  lg:justify-start justify-center gap-1 font-normal text-[#474256] px-3 py-1 rounded-full mt-3 text-xs font-inter'>
                 <ShieldCheck className='text-[#018BEF]' />{' '}
                 <span>Tier {currentUser?.tier}</span>
               </span>
@@ -100,7 +100,7 @@ export const UserProfileHeader = () => {
         </div>
 
         {/* Account Info */}
-        <div className='flex items-center lg:gap-8  gap-3 justify-center  relative'>
+        <div className='flex items-center lg:gap-8  gap-3 justify-center  relative lg:flex-row flex-col'>
           {/* Dropdown */}
           <div
             onClick={() => setOpen(!open)}
@@ -145,10 +145,10 @@ export const UserProfileHeader = () => {
           </div>
 
           {/* Copy / Share buttons */}
-          <div className='flex gap-6'>
+          <div className='flex gap-6 '>
             <button
               onClick={handleCopy}
-              className='p-2 bg-[#D70D4A] h-[60px] cursor-pointer w-[60px] text-white rounded-lg flex justify-center items-center relative'
+              className='p-2 bg-[#D70D4A] h-[60px]  cursor-pointer w-[60px] text-white rounded-lg flex justify-center items-center relative'
             >
               <Copy size={20} />
               {copied && (
