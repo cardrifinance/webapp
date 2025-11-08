@@ -1,3 +1,8 @@
+'use client';
+
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import React from 'react';
+
 export const SettingsCard = ({
   icon,
   title,
@@ -7,8 +12,25 @@ export const SettingsCard = ({
   title: string;
   description: string;
 }) => {
+  const router = useRouter();
+  const pathname = usePathname(); // current route e.g. /dashboard/settings
+  const searchParams = useSearchParams();
+
+  const handleClick = () => {
+    const tabParam = title.toLowerCase().replace(/\s+/g, '-');
+
+    // Preserve other existing params (if any)
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', tabParam);
+
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
   return (
-    <div className='flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-4  hover:shadow-md transition-all'>
+    <div
+      onClick={handleClick}
+      className='flex items-center justify-between bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-md transition-all cursor-pointer'
+    >
       <div className='flex items-center gap-3'>
         <div className='p-2 bg-gray-50 rounded-xl'>{icon}</div>
         <div>

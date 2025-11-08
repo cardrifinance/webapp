@@ -19,6 +19,7 @@ interface UserData {
   accountNumber2Status?: any;
   accountNumber2Id?: string;
   accountNumber2?: string;
+  phoneNumber: string;
 }
 
 interface UserStore {

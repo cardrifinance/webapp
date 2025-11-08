@@ -100,7 +100,7 @@ export const UserProfileHeader = () => {
         </div>
 
         {/* Account Info */}
-        <div className='flex items-center lg:gap-8  gap-3 justify-center  relative lg:flex-row flex-col'>
+        <div className='flex items-center lg:gap-8  gap-3 justify-center  relative '>
           {/* Dropdown */}
           <div
             onClick={() => setOpen(!open)}
@@ -148,8 +148,9 @@ export const UserProfileHeader = () => {
           <div className='flex gap-6 '>
             <button
               onClick={handleCopy}
-              className='p-2 bg-[#D70D4A] h-[60px]  cursor-pointer w-[60px] text-white rounded-lg flex justify-center items-center relative'
+              className='p-2 bg-[#D70D4A] lg:h-[60px] h-[30px]  lg:w-[60px] w-[30px] text-white rounded-lg flex justify-center items-center relative'
             >
+              '
               <Copy size={20} />
               {copied && (
                 <span className='absolute -bottom-6 text-[11px] text-[#D70D4A] font-medium'>
@@ -160,7 +161,7 @@ export const UserProfileHeader = () => {
 
             <button
               onClick={handleShare}
-              className='p-2 bg-[#D70D4A] h-[60px] cursor-pointer w-[60px] text-white rounded-lg flex justify-center items-center'
+              className='p-2 bg-[#D70D4A] lg:h-[60px] h-[30px]  lg:w-[60px] w-[30px] cursor-pointer  text-white rounded-lg flex justify-center items-center'
             >
               <Share2 size={20} />
             </button>
