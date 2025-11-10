@@ -1,64 +1,77 @@
+'use client';
+
 import {
   Dialog,
   DialogPanel,
   DialogTitle,
   Transition,
   TransitionChild,
-} from "@headlessui/react";
-import React from "react";
+} from '@headlessui/react';
+import React, { Fragment } from 'react';
+import { XIcon } from 'lucide-react';
 
-import {
-  useDeviceBindingOverlay,
-  useSendMoneyModalOverlay,
-} from "@/stores/overlay";
-import DeviceBindingWidget from "../widget/device-binding-widget";
-import { XIcon } from "lucide-react";
-import SendMoneyWidget from "../widget/send-money-widget";
+import { useSendMoneyModalOverlay } from '@/stores/overlay';
+import SendMoneyWidget from '../widget/send-money-widget';
 
 const SendMoneyModal = () => {
   const { open, setOpen } = useSendMoneyModalOverlay();
 
   return (
-    <Transition show={open}>
-      <Dialog className="relative z-10" onClose={setOpen}>
+    <Transition show={open} as={Fragment}>
+      <Dialog as='div' className='relative z-50' onClose={setOpen}>
+        {/* Overlay Background */}
         <TransitionChild
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
         >
-          <div className="fixed inset-0 bg-gray-500 opacity-70 backdrop-blur-sm transition-opacity" />
+          <div className='fixed inset-0 bg-gray-500/70 backdrop-blur-sm transition-opacity' />
         </TransitionChild>
 
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center overflow-hidden lg:p-4 text-center sm:items-center sm:p-0">
-            <TransitionChild
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        {/* Modal Content */}
+        <div className='fixed inset-0 z-50 flex items-end justify-center overflow-y-auto lg:items-center'>
+          <TransitionChild
+            as={Fragment}
+            enter='ease-out duration-300'
+            enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+            enterTo='opacity-100 translate-y-0 sm:scale-100'
+            leave='ease-in duration-200'
+            leaveFrom='opacity-100 translate-y-0 sm:scale-100'
+            leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
+          >
+            <DialogPanel
+              className='
+                relative transform overflow-hidden
+                bg-[#F5F2FB] shadow-xl transition-all
+                w-full sm:max-w-[526px]
+                sm:my-8 rounded-t-[30px] lg:rounded-[30px]
+                px-4 pt-5 pb-6 lg:px-[30px] lg:pb-[30px]
+                h-[80vh] lg:h-auto
+              '
             >
-              <DialogPanel className="h-[calc(100vh-150px)] lg:h-fulll  relative transform lg:rounded-[30px] bg-[#F5F2FB] px-4 pb-4 pt-5 text-left lg:pl-[30px] lg:pb-[30px] lg:pr-[30px] shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-[526px] sm:p-6">
-                <div className="flex w-ful items-center  justify-between gap-4">
-                  <DialogTitle className="text-[20px] font-sora font-bold text-[#07052A]">
-                    Send Money
-                  </DialogTitle>
-                  <div
-                    className="h-10.5 w-10.5 flex items-center justify-center rounded-[12px] border border-[#6C757D] cursor-pointer"
-                    onClick={() => setOpen(false)}
-                  >
-                    <XIcon color="#6C757D" />
-                  </div>
-                </div>
+              {/* Header */}
+              <div className='flex items-center justify-between mb-4'>
+                <DialogTitle className='text-[20px] font-sora font-bold text-[#07052A]'>
+                  Send Money
+                </DialogTitle>
+                <button
+                  onClick={() => setOpen(false)}
+                  className='h-10.5 w-10.5 flex items-center justify-center rounded-[12px] border border-[#6C757D] hover:bg-gray-100 transition'
+                >
+                  <XIcon color='#6C757D' size={20} />
+                </button>
+              </div>
 
+              {/* Body */}
+              <div className='h-full max-h-[calc(80vh-70px)] overflow-y-auto scrollbar-hide'>
                 <SendMoneyWidget />
-              </DialogPanel>
-            </TransitionChild>
-          </div>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
         </div>
       </Dialog>
     </Transition>
