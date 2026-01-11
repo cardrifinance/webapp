@@ -1,16 +1,16 @@
 export type Status =
-  | "pending"
-  | "reviewed"
-  | "approved"
-  | "rejected"
-  | "accepted";
+  | 'pending'
+  | 'reviewed'
+  | 'approved'
+  | 'rejected'
+  | 'accepted';
 
 export function numberWithCommas(x: any) {
   if (isNaN(parseFloat(x)) || !isFinite(x)) {
-    return "0.00";
+    return '0.00';
   }
 
-  return parseFloat(x).toLocaleString("en-US", {
+  return parseFloat(x).toLocaleString('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
@@ -18,7 +18,7 @@ export function numberWithCommas(x: any) {
 
 // GET UID
 export const getBrowserUID = (): string => {
-  const STORAGE_KEY = "browser_uid";
+  const STORAGE_KEY = 'browser_uid';
 
   // Check if we already have a UID in localStorage
   const storedUid = localStorage.getItem(STORAGE_KEY);
@@ -30,14 +30,14 @@ export const getBrowserUID = (): string => {
   // Generate a new UUID
   const newUid = (() => {
     // Try crypto.randomUUID() first if available
-    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
       return crypto.randomUUID();
     }
 
     // Fallback UUID v4 generator
-    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
-      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
       return v.toString(16);
     });
   })();
@@ -56,23 +56,24 @@ export const getStatusText = (status: Status | string) => {
 
 export const getTextStatus = (status: string) => {
   switch (status?.toLowerCase()) {
-    case "7":
-      return "Pending";
-    case "1":
-      return "Completed";
-    case "archived":
-      return "bg-red-500/5 border-red-500 text-red-500";
-    case "draft":
-      return "bg-gray-500/5 border-gray-500 text-gray-500";
-    case "0":
-      return "Failed";
+    case '7':
+      return 'Pending';
+    case '1':
+      return 'Completed';
+    case 'archived':
+      return 'bg-red-500/5 border-red-500 text-red-500';
+    case 'draft':
+      return 'bg-gray-500/5 border-gray-500 text-gray-500';
+    case '0':
+    case '2':
+      return 'Failed';
   }
 };
 
 // types.ts (create this if you don't have it)
 export interface Transaction {
   id: string;
-  type: "credit" | "debit" | "transfer" | string; // More specific if possible
+  type: 'credit' | 'debit' | 'transfer' | string; // More specific if possible
   amount: number;
   date: string;
   network: string;
@@ -89,7 +90,7 @@ export interface MonthlyTransactionGroup {
 // transactionHelpers.ts
 export const filterTransactionsByType = (
   transactionGroups: MonthlyTransactionGroup[],
-  type: Transaction["type"],
+  type: Transaction['type'],
   network?: string // Make network optional
 ): MonthlyTransactionGroup[] => {
   return transactionGroups

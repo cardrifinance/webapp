@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { baseURL } from "./axiosInstance";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { baseURL } from './axiosInstance';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -11,9 +11,9 @@ export const tokenExtractor = (): {
   authHeader: string;
   tokenData: any;
 } | null => {
-  const token = localStorage.getItem("access_token");
-  const refresh_token = localStorage.getItem("refresh_token");
-  const token_type = localStorage.getItem("token_type");
+  const token = localStorage.getItem('access_token');
+  const refresh_token = localStorage.getItem('refresh_token');
+  const token_type = localStorage.getItem('token_type');
 
   if (!token || !token_type) return null;
 
@@ -33,7 +33,7 @@ export const tokenExtractor = (): {
       tokenData,
     };
   } catch (error) {
-    console.error("Failed to parse token from local storage", error);
+    console.error('Failed to parse token from local storage', error);
     return null;
   }
 };

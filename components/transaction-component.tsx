@@ -62,18 +62,18 @@ const formatMonth = (monthString: string): string => {
 const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case '7':
-      return ' text-[#FA9232] font-inter border-0 text-[10px] font-normal leading-[16px] p-[10px]';
+      return 'bg-orange-500/5 text-[#FA9232] font-inter border-0 text-sm font-normal  p-[10px]';
     case '1':
-      return '  text-[#1FBA79] font-inter border-0 text-[10px] font-normal leading-[16px] p-[10px]';
+      return 'bg-green-500/5   text-[#1FBA79] font-inter border-0 text-sm font-normal p-[10px]';
     case 'archived':
       return 'bg-red-500/5 border-red-500 text-red-500';
     case 'draft':
       return 'bg-gray-500/5 border-gray-500 text-gray-500';
     case '0':
-      return ' font-inter text-[10px] border-0 text-red-500';
+    case '2':
+      return ' font-inter text-sm border-0 text-red-500  bg-red-500/5 border-red-500 p-[10px] font-normal ';
   }
 };
-
 const StatusPill: React.FC<StatusPillProps> = ({ status }) => {
   return (
     <span
@@ -359,7 +359,7 @@ const TransactionsComponent = ({
                     </TableCell>
                     <TableCell>{transactionType(transaction.type)}</TableCell>
                     <TableCell>
-                      {transaction.reciever || transaction.phoneNumber}{' '}
+                      {transaction.reciever || transaction.phoneNumber} <br />
                       {transaction.type === '6'
                         ? transaction.cref
                         : transaction.type === '12'

@@ -33,6 +33,7 @@ const CardriPay = () => {
       label: 'Deposit',
       description: 'Withdraw commission to other banks using the bank details.',
       image: deposit,
+      action: () => router.push('/cardri-pay/deposit'),
     },
     {
       label: 'Swap',
