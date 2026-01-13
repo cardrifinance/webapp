@@ -3,12 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArchiveMinus, CloseCircle } from "iconsax-react";
 import {
-  ArrowLeft,
-  CheckCheckIcon,
-  CheckCircle2,
-  ChevronDown,
-  ChevronLeft,
-  InfoIcon,
+  
   X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -56,22 +51,17 @@ import TransactionPinModal from "@/components/modal/transaction_pin_modal";
 import { getRate } from "@/services/lib";
 import { verifyTransactionPin } from "@/services/_request";
 import LoaderModal from "../modal/request_sending_modal";
-import PaymentMethodModal from "../modal/payment_method";
 
-import COM from "@/public/assets/currencies/cashback.png";
-import NGN from "@/public/assets/currencies/NGNCurrency.png";
-import { useUserStore } from "@/stores/currentUserStore";
+
 import PaymentMethodSelector from "../paymentMethodSelector";
 import TransactionLastStage from "../navigation/TransactionLastStage";
 
 const DomTransferPage = () => {
   const router = useRouter();
   const [userAccountInfo, setUserAccountInfo] = useState({});
-  const [isBankInfoLoad, setIsBankInfoLoad] = useState(false);
-  const { otp, setOpen: setOpenOtp } = useTransactionPinOverlay();
+  const { otp, setOpen: setOpenOtp, setOtp } = useTransactionPinOverlay();
 
-  const [amount, setAmount] = useState("");
-  const [narration, setNarration] = useState("");
+ 
 
   const [step, setstep] = useState(1);
 
@@ -82,7 +72,6 @@ const DomTransferPage = () => {
   const { paymentMethodDetails, showMethod, setShowMethod } =
     usePaymentMethodOverlay();
 
-  const currentUser = useUserStore((state) => state.user);
 
   const handeMovetoNextStep = () => {
     const step = searchParams.get("step");
@@ -103,22 +92,18 @@ const DomTransferPage = () => {
           const toastId = toast.loading("Verifying pin...");
 
           //@ts-ignore
-          const fullName = userAccountInfo?.accountName || "";
-          const nameParts = fullName.trim().split(/\s+/); // Split by any whitespace
-
-          const firstName = nameParts[0] || ""; // First name is first part
-          const lastName = nameParts.slice(1).join(" ") || "";
+          
           await verifyTransactionPin(otp);
           toast.dismiss(toastId);
           setOpen(false);
           setOpenLoader(true);
           const response = await createDomPayment({
             amount: watch("amount"),
-            firstName: firstName,
-            lastName: lastName,
+            firstName: watch('firstName'),
+            lastName: watch("lastName"),
             currencyfrom: "NGN",
-            //@ts-ignore
-            account_number: userAccountInfo?.accountNumber,
+            
+            account_number: watch("id"),
             bankName: bankDetails?.bankName,
             bank_code: bankDetails.bankCode,
             balanceType: paymentMethodDetails?.value,
@@ -126,14 +111,15 @@ const DomTransferPage = () => {
             m: "web",
           });
 
-          console.log(response);
           //@ts-ignore
           if (response.success === "false") {
             //@ts-ignore
             toast.error(response.message || "An unknown error occur");
+            setOpen(false)
           } else {
             setstep(4);
             setOpenOtp(false);
+            setOtp("")
 
             addUrlParam(
               "ref",
@@ -145,7 +131,7 @@ const DomTransferPage = () => {
           }
         }
       } catch (e) {
-        console.log(e);
+        
         //@ts-ignore
         if (e?.response?.data.success === "false 1") {
           toast.error("Incorrect PIN");
@@ -157,6 +143,9 @@ const DomTransferPage = () => {
               "Could not complete transaction, try again"
           );
         }
+        setOpen(false)
+        setOtp("")
+        
       } finally {
         setOpenLoader(false);
       }
@@ -166,8 +155,7 @@ const DomTransferPage = () => {
   const {
     data: bankList,
     isLoading,
-    isError,
-    error,
+    
   } = useQuery({
     queryKey: ["banks"], // Unique key for this query
     queryFn: getBanks, // Your fetch function
@@ -182,6 +170,8 @@ const DomTransferPage = () => {
 
   type FormValues = {
     id: string;
+    firstName: string;
+    lastName:string;
 
     narration: string;
     amount: string;
@@ -199,78 +189,37 @@ const DomTransferPage = () => {
   } = useForm<FormValues>({
     defaultValues: {
       id: "",
-
+      firstName:"",
+      lastName:"",
       narration: "",
       amount: "",
       amountInNaira: "",
       type: "",
     },
   });
-  const [checked, setChecked] = useState(false);
   const { open, setOpen, bankDetails } = useBankModal();
 
   const [isLoadings, setIsLoading] = useState(false);
 
   const { openLoader, setOpenLoader } = useLoadingSpinOverlay();
 
-  const handleChange = (nextChecked: any) => {
-    setChecked(nextChecked);
-  };
 
-  useEffect(() => {
-    const fetchBankDetails = async () => {
-      if (bankDetails?.bankCode === undefined && watch("id") === "") return;
-
-      try {
-        // setIsBankInfoLoad(true);
-        if (
-          bankDetails?.bankCode &&
-          watch("id") !== "" &&
-          watch("id").length === 10
-        ) {
-          setIsLoading(true);
-
-          const response = await resolveAccountInfo(
-            watch("id"),
-            bankDetails?.bankCode
-          );
-
-          //  console.log(response, "response");
-          //@ts-ignore
-          setUserAccountInfo(response.data);
-          setIsBankInfoLoad(true);
-
-          //@ts-ignore
-          if (response?.data?.responseCode !== "00") {
-            toast.error("Invalid account number. Please try again.");
-            setIsBankInfoLoad(false);
-          }
-        }
-      } catch (error) {
-        toast.error("Error fetching bank details. Please try again later.");
-        setIsBankInfoLoad(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchBankDetails();
-  }, [bankDetails, watch("id")]);
+ 
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     console.log(data, "data");
   };
   useEffect(() => {
-    if (!userAccountInfo) {
+    if (!bankDetails ) {
       setstep(1);
       updateUrlParams({ step: "1" });
     }
-  }, [userAccountInfo]);
+  }, [bankDetails ]);
 
   const ConfirmDrawer = ({ receiverAccountInfo, amount, narration }: any) => {
     const { data, loading, error, refresh } = useManagementData();
     const { open, setOpen } = useTransactionPinOverlay();
 
-    //console.log(data);
 
     return (
       <Drawer open={openDrawer} onOpenChange={setOpenDrawer}>
@@ -324,15 +273,14 @@ const DomTransferPage = () => {
                 <span className="font-medium">
                   {" "}
                   {/*** @ts-ignore */}
-                  {receiverAccountInfo && receiverAccountInfo.accountNumber}
+                  {watch("id")}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Name:</span>
                 <span className="font-medium">
-                  {" "}
-                  {/*** @ts-ignore */}
-                  {receiverAccountInfo && receiverAccountInfo?.accountName}
+                
+                  {watch("firstName")}{" "}{watch("lastName")}
                 </span>
               </div>
             </div>
@@ -426,6 +374,51 @@ const DomTransferPage = () => {
               >
                 {step === 1 && (
                   <>
+
+                    <div className="flex items-center gap-3">
+<Label htmlFor="first name" className="flex flex-col gap-4 ">
+                      <span className="font-inter font-normal text-base text-label-100">
+                        First name
+                      </span>
+                      <Input
+                        {...register("firstName")}
+                        name="firstName"
+                        id="firstName"
+                        type="text"
+                        //   inputMode="numeric"
+                        //   maxLength={10}
+                        placeholder="Enter first name"
+                        className="h-[60px]  py-[15] px-[16px] rounded-[10px] border border-[#faf7ff] outline-0  bg-[#FAF7FF] placeholder:text-base  placeholder:font-normal placeholder:text-placeholder-100  focus-visible:ring-[#faf7ff] focus-visible:ring-offset-0 placeholder:font-inter font-inter  text-base font-normal [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+
+                      {errors.firstName && (
+                        <p className="text-xs text-red-500 mt-3">
+                          {errors.firstName.message}
+                        </p>
+                      )}
+                    </Label>
+                    <Label htmlFor="Email" className="flex flex-col gap-4 ">
+                      <span className="font-inter font-normal text-base text-label-100">
+                        First name
+                      </span>
+                      <Input
+                        {...register("lastName")}
+                        name="lastName"
+                        id="lastName"
+                        type="text"
+                        //   inputMode="numeric"
+                        //   maxLength={10}
+                        placeholder="Enter last name"
+                        className="h-[60px]  py-[15] px-[16px] rounded-[10px] border border-[#faf7ff] outline-0  bg-[#FAF7FF] placeholder:text-base  placeholder:font-normal placeholder:text-placeholder-100  focus-visible:ring-[#faf7ff] focus-visible:ring-offset-0 placeholder:font-inter font-inter  text-base font-normal [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+
+                      {errors.lastName && (
+                        <p className="text-xs text-red-500 mt-3">
+                          {errors.lastName.message}
+                        </p>
+                      )}
+                    </Label>
+                      </div>
                     <Label htmlFor="account" className="flex flex-col gap-4 ">
                       <span className="font-inter font-normal text-base text-label-100">
                         Recipient account
@@ -470,93 +463,55 @@ const DomTransferPage = () => {
                       >
                         Bank
                       </label>
-                      {bankDetails.length === 0 && (
-                        <Controller
-                          name={"id"}
-                          control={control}
-                          defaultValue={bankDetails?.bankCode || ""}
-                          render={({ field: { onChange } }) => (
-                            <button
-                              onClick={() => setOpen(true)}
-                              type="button"
-                              className="h-[60px] w-full mt-4 py-[15px] px-[16px] rounded-[10px] border border-[#faf7ff] outline-0 bg-[#FAF7FF] text-[#B4ACCA] text-base font-normal font-inter flex items-center justify-between"
-                            >
-                              Select bank
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M6 9l6 6 6-6" />
-                              </svg>
-                            </button>
-                          )}
-                        />
-                      )}
+                     
+                       <Controller
+  name="id"
+  control={control}
+  defaultValue={bankDetails?.bankCode || ''}
+  render={({ field: { value, onChange } }) => {
+    const selectedBank =
+      bankDetails.bankName;
+     
+//
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="h-[60px] w-full mt-4 py-[15px] px-[16px] rounded-[10px] border border-[#faf7ff] outline-0 bg-[#FAF7FF] text-base font-normal font-inter flex items-center justify-between"
+      >
+        <span
+          className={
+            selectedBank ? 'text-[#07052A]' : 'text-[#B4ACCA]'
+          }
+        >
+          {selectedBank ?? 'Select bank'}
+        </span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+    );
+  }}
+/>
+
+                    
+                      
                     </div>
-                    {bankDetails.bankName !== undefined && (
-                      <div
-                        className="py-[10px] px-4 bg-[#FAF7FF] border border-[#EFD1DC] rounded-[10px] flex gap-[10px] items-center justify-between"
-                        onClick={() => setOpen(true)}
-                      >
-                        <div className="flex gap-[10px] items-center">
-                          <Image
-                            src={bankLogo}
-                            alt={bankDetails?.bankName}
-                            className="w-10.5 h-10.5"
-                          />
-                          <span className="text-[#07052A] font-normal text-base font-inter">
-                            {bankDetails.bankName}
-                          </span>
-                        </div>
-                        <ChevronDown size={20} />
-                      </div>
-                    )}
+                   
 
                     {/** @ts-ignore */}
-                    {isLoadings ? (
-                      <div className="flex items-center gap p-2.5 gap-4 bg-green-100 rounded-[10px]">
-                        <FaSpinner
-                          size={20}
-                          className="text-green-500 animate-spin"
-                        />
-                        {/** @ts-ignore */}
-                        <span className="text-green-500 font-semibold text-base font-inter ">
-                          Verifying account details...
-                        </span>
-                      </div>
-                    ) : //@ts-ignore
-                    userAccountInfo.responseCode === "00" ? (
-                      <div className="flex items-center gap p-2.5 gap-4">
-                        <CheckCircle2 fill="#1FBA79" color="#fff" size={32} />
-                        {/** @ts-ignore */}
-                        <span className="text-[#07052A] font-semibold text-base font-inter ">
-                          {
-                            //@ts-ignore
-                            userAccountInfo?.accountName
-                          }
-                        </span>
-                      </div>
-                    ) : (
-                      //@ts-ignore
-                      userAccountInfo !== undefined ||
-                      //@ts-ignore
-                      (userAccountInfo.code !== "00" && (
-                        <div className="flex items-center gap p-2.5 gap-4 bg-red-50 rounded-[10px]">
-                          <CloseCircle fill="red" color="red" size={32} />
-                          {/** @ts-ignore */}
-                          <span className="text-[red] font-semibold text-base font-inter ">
-                            Failed to verifiy bank account
-                          </span>
-                        </div>
-                      ))
-                    )}
+                  
                   </>
                 )}
 
@@ -573,7 +528,7 @@ const DomTransferPage = () => {
                         <div>
                           <h3 className="text-[#07052A] font-bold font-sora  text-[20px]">
                             {/***@ts-ignore */}
-                            {userAccountInfo.accountName}
+                            {watch('firstName')}{" "}{watch("lastName")}
                           </h3>
 
                           <div className="text-[#474256] font-normal font-inter text-[14px]">
@@ -655,14 +610,11 @@ const DomTransferPage = () => {
                               ","
                             );
 
-                            // Combine formatted integer + decimal (if any)
                             const formattedValue =
                               formattedInteger + decimalPart;
 
-                            // Update input value
                             e.target.value = formattedValue;
 
-                            // Only adjust cursor if selectionStart is not null
                             if (selectionStart !== null) {
                               const commaCount = (
                                 formattedValue.match(/,/g) || []
@@ -810,7 +762,7 @@ const DomTransferPage = () => {
                   <Button
                     type="submit"
                     onClick={handeMovetoNextStep}
-                    disabled={isBankInfoLoad === false}
+                    disabled={bankDetails.bankName ==""}
                     className="w-full rounded-xl mb-20 cursor-pointer mt-4 bg-primary-100 text-white font-inter font-medium text-[20px] h-[60px] flex justify-center items-center"
                   >
                     Continue
@@ -836,8 +788,8 @@ const DomTransferPage = () => {
 
         <ConfirmDrawer
           receiverAccountInfo={userAccountInfo}
-          amount={amount}
-          narration={narration}
+          amount={watch("amount")}
+          narration={watch("narration")}
         />
 
         <BankModal bankList={bankList} />

@@ -214,6 +214,8 @@ const AirtimePage = () => {
       value: "commission",
     },
   ];
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     if (paymentMethodDetails.value === undefined) {
@@ -221,6 +223,8 @@ const AirtimePage = () => {
     }
     setOpenDrawer(true);
   };
+
+  
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const stepFromParams = params.get("step") || "1";
@@ -530,30 +534,57 @@ const AirtimePage = () => {
                   </span>
 
                   <div className="grid grid-cols grid-cols-3 gap-2 ">
-                    {TopUpList?.map((datas, index) => (
-                      <div
-                        className="flex-col flex items-center gap-2 cursor-pointer bg-[#F5F2FBCC] py-6 px-5 rounded-[16px] max-w-[111px]"
-                        key={index}
-                        //@ts-ignore
-                        onClick={() => setValue("amount", datas.amount)}
-                      >
-                        <h3 className="text-[#07052A] font-sora font-bold text-[20px]">
-                          <sub>{currencySymbols("NGN")}</sub>
-                          {numberWithCommas(datas.amount)?.replace(".00", "")}
-                        </h3>
+                {TopUpList?.map((datas, index) => {
+  const amount = Number(watch('amount'));
 
-                        <span className="font-normal text-[#474256] text-xs font-inter whitespace-nowrap inline-flex items-baseline">
-                          <sub className="mr-0.5">{currencySymbols("NGN")}</sub>
-                          <span>
-                            {calculateCommision(
-                              datas?.amount.toString(),
-                              data?.ncaitime
-                            )}{" "}
-                            cashback
-                          </span>
-                        </span>
-                      </div>
-                    ))}
+  const matchedIndex = TopUpList?.findIndex(
+    item => Number(item.amount) === amount
+  );
+
+  const isSelected =
+    matchedIndex !== -1
+      ? index === matchedIndex
+      : index === selectedIndex;
+
+  return (
+    <div
+      key={index}
+      onClick={() => {
+        setSelectedIndex(index);
+        //@ts-ignore
+        setValue('amount', datas.amount);
+      }}
+      className={`relative flex flex-col items-center gap-2 cursor-pointer py-6 px-5 rounded-[16px] max-w-[111px]
+        ${
+          isSelected
+            ? 'bg-[#E8E3F8] border-2 border-primary-100'
+            : 'bg-[#F5F2FBCC]'
+        }`}
+    >
+      {isSelected && (
+        <span className="absolute top-2 right-2 h-3 w-3 rounded-full bg-primary-100" />
+      )}
+
+      <h3 className="text-[#07052A] font-sora font-bold text-[20px]">
+        <sub>{currencySymbols('NGN')}</sub>
+        {numberWithCommas(datas.amount)?.replace('.00', '')}
+      </h3>
+
+      <span className="font-normal text-[#474256] text-xs font-inter whitespace-nowrap inline-flex items-baseline">
+        <sub className="mr-0.5">{currencySymbols('NGN')}</sub>
+        <span>
+          {calculateCommision(
+            datas?.amount.toString(),
+            data?.ncaitime
+          )}{' '}
+          cashback
+        </span>
+      </span>
+    </div>
+  );
+})}
+
+
                   </div>
                 </div>
 

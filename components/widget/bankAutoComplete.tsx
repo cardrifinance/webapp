@@ -63,7 +63,10 @@ export function BankAutocomplete({
                 value={searchTerm}
               />
             </div>
-            <div className="max-h-[500px] flex flex-col gap-2 overflow-y-scroll">
+            <div className="max-h-[500px] flex flex-col gap-2 overflow-y-scroll"  style={{
+              msOverflowStyle:'none',
+              scrollbarWidth:"none"
+            }}>
               {filteredBanks?.map((bank) => (
                 <div
                   key={bank.value}

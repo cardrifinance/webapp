@@ -115,16 +115,33 @@ export const getPurpose = async (): Promise<any> => {
   }
 };
 
-export const getTransactions = async (): Promise<MonthlyTransactionGroup[]> => {
+
+
+
+export const getTransactions = async (
+  params: any = {}
+): Promise<MonthlyTransactionGroup[]> => {
   try {
-    const response = await fetchData("get-transactions?count=100");
+    // Convert dates to ISO strings and remove undefined/null values
+    const queryParams = Object.entries(params)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .map(([key, value]) =>
+        value instanceof Date ? `${key}=${value.toISOString()}` : `${key}=${value}`
+      )
+      .join("&");
+
+    const url = `get-transactions${queryParams ? `?${queryParams}` : ""}`;
+
+    const response = await fetchData(url);
+
     //@ts-ignore
-    return response.data as MonthlyTransactionGroup[]; // Cast to correct type
+    return response.data as MonthlyTransactionGroup[];
   } catch (error) {
     console.error("Failed to fetch transactions:", error);
     throw error;
   }
 };
+
 
 export const getTransactionById = async (id: string) => {
   try {

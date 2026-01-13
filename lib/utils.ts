@@ -1,21 +1,21 @@
-import { type ClassValue, clsx } from 'clsx';
+import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { baseURL } from './axiosInstance';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export const serverRoute = (route: string): string => `${baseURL}${route}`;
-
 export const tokenExtractor = (): {
   authHeader: string;
   tokenData: any;
 } | null => {
   const token = localStorage.getItem('access_token');
-  const refresh_token = localStorage.getItem('refresh_token');
-  const token_type = localStorage.getItem('token_type');
+  const refresh_token = localStorage.getItem('access_token');
+  const token_type = localStorage.getItem('token_type') || '';
 
-  if (!token || !token_type) return null;
+  // console.log('Extracted Tokens:', token, refresh_token, token_type);
+
+  if (!token) return null;
 
   try {
     const parsedToken = JSON.parse(token) as string;
@@ -37,3 +37,4 @@ export const tokenExtractor = (): {
     return null;
   }
 };
+export const serverRoute = (route: string): string => `${baseURL}${route}`;

@@ -67,7 +67,10 @@ const SendMoneyModal = () => {
               </div>
 
               {/* Body */}
-              <div className='h-full max-h-[calc(80vh-70px)] overflow-y-auto scrollbar-hide'>
+              <div className='h-full max-h-[calc(80vh-70px)] overflow-y-auto scrollbar-hide' style={{
+                msOverflowStyle:"none",
+                scrollbarWidth:"none"
+              }}>
                 <SendMoneyWidget />
               </div>
             </DialogPanel>

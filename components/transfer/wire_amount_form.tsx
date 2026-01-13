@@ -3,12 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArchiveMinus, CloseCircle } from "iconsax-react";
 import {
-  ArrowLeft,
-  CheckCheckIcon,
-  CheckCircle2,
-  ChevronDown,
-  ChevronLeft,
-  InfoIcon,
+ 
   X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -155,7 +150,7 @@ const WireAmountFrom = () => {
           const response = await createWirepayment({
             beneficiaryId: beneficiaryDetalis.id,
             purposeId: watch("purpose"),
-            amount: watch("amount"),
+            amount: watch("amount").replaceAll(",",""),
             currencyfrom: "NGN",
             balanceType: paymentMethodDetails?.value,
             m: "web",
@@ -172,7 +167,7 @@ const WireAmountFrom = () => {
           addUrlParam("status", "success");
         }
       } catch (e) {
-        console.log(e);
+      //  console.log(e);
         setOtp("");
 
         //@ts-ignore
@@ -185,7 +180,9 @@ const WireAmountFrom = () => {
             e?.response?.data.message ||
               "Could not complete transaction, try again"
           );
+           setOpen(false)
         }
+       
       } finally {
         setOpenLoader(false);
       }

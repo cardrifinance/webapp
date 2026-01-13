@@ -87,6 +87,7 @@ const DataPage = () => {
   const currentUser = useUserStore((state) => state.user);
 
   const { getNetworkPlans } = useNetworkPlans();
+const [selectedPlanIndex, setSelectedPlanIndex] = useState<number | null>(null);
 
   const PaymentMethodList = [
     {
@@ -590,34 +591,51 @@ const DataPage = () => {
                   </span>
 
                   <div className="grid grid-cols grid-cols-3 gap-2">
-                    {plans?.map((datas, index) => (
-                      <div
-                        className="flex-col flex items-center gap-2 cursor-pointer bg-[#F5F2FBCC] py-6 px-5 rounded-[16px] max-w-[115px]"
-                        key={index}
-                        onClick={() => {
-                          //@ts-ignore
-                          setValue("amount", datas.price);
-                          //@ts-ignore
-                          setPlanId(datas.planid);
-                          setPlanName(datas.name);
-                        }}
-                      >
-                        <h3 className="text-[#07052A] font-sora font-bold text-[20px]">
-                          {datas.plan}
-                        </h3>
+                   {plans?.map((datas, index) => {
+  const isSelected =
+     index === selectedPlanIndex;
 
-                        <span className="font-normal text-[#474256] text-xs font-inter whitespace-nowrap inline-flex items-baseline">
-                          <sub className="mr-0.5">{currencySymbols("NGN")}</sub>
-                          <span>
-                            {numberWithCommas(datas.price)?.replace(".00", "")}
-                          </span>
-                        </span>
+  return (
+    <div
+      key={index}
+      onClick={() => {
+        setSelectedPlanIndex(index);
+        //@ts-ignore
+        setValue('amount', datas.price);
+        //@ts-ignore
+        setPlanId(datas.planid);
+        setPlanName(datas.name);
+      }}
+      className={`relative flex flex-col items-center gap-2 cursor-pointer py-6 px-5 rounded-[16px] max-w-[115px]
+        ${
+          isSelected
+            ? 'bg-[#E8E3F8] border-2 border-primary-100'
+            : 'bg-[#F5F2FBCC]'
+        }`}
+    >
+      {/* Indicator */}
+      {isSelected && (
+        <span className="absolute top-2 right-2 h-3 w-3 rounded-full bg-primary-100" />
+      )}
 
-                        <span className="font-normal text-[#474256] text-xs font-inter text-center ">
-                          {datas.name}
-                        </span>
-                      </div>
-                    ))}
+      <h3 className="text-[#07052A] font-sora font-bold text-[20px]">
+        {datas.plan}
+      </h3>
+
+      <span className="font-normal text-[#474256] text-xs font-inter whitespace-nowrap inline-flex items-baseline">
+        <sub className="mr-0.5">{currencySymbols('NGN')}</sub>
+        <span>
+          {numberWithCommas(datas.price)?.replace('.00', '')}
+        </span>
+      </span>
+
+      <span className="font-normal text-[#474256] text-xs font-inter text-center">
+        {datas.name}
+      </span>
+    </div>
+  );
+})}
+
                   </div>
                 </div>
 

@@ -426,81 +426,9 @@ const ChinaTransferPage = () => {
                         )}
                       </div>
 
-                      {bankDetails.bankName !== undefined && (
-                        <div
-                          className="py-[10px] px-4 bg-[#FAF7FF] border border-[#EFD1DC] rounded-[10px] flex gap-[10px] items-center justify-between"
-                          onClick={() => setOpen(true)}
-                        >
-                          <div className="flex gap-[10px] items-center">
-                            <Image
-                              src={bankLogo}
-                              alt={bankDetails?.bankName}
-                              className="w-10.5 h-10.5"
-                            />
-                            <span className="text-[#07052A] font-normal text-base font-inter">
-                              {bankDetails.bankName}
-                            </span>
-                          </div>
-                          <ChevronDown size={20} />
-                        </div>
-                      )}
-
-                      {isLoadings && (
-                        <div className="flex items-center gap p-2.5 gap-4 bg-green-100 rounded-[10px]">
-                          <FaSpinner
-                            size={20}
-                            className="animate-spin text-green-300"
-                          />
-                          {/** @ts-ignore */}
-                          <span className="text-green-300 font-semibold text-base font-inter ">
-                            {
-                              //@ts-ignore
-                              userAccountInfo?.message
-                            }
-                          </span>
-                        </div>
-                      )}
+                     
                       {/** @ts-ignore */}
-                      {isLoadings ? (
-                        <div className="flex items-center gap p-2.5 gap-4 bg-green-100 rounded-[10px]">
-                          <FaSpinner
-                            size={20}
-                            className="text-green-500 animate-spin"
-                          />
-                          {/** @ts-ignore */}
-                          <span className="text-green-500 font-semibold text-base font-inter ">
-                            Verifying account details...
-                          </span>
-                        </div>
-                      ) : //@ts-ignore
-                      userAccountInfo.code === "00" ? (
-                        <div className="flex items-center gap p-2.5 gap-4">
-                          <CheckCircle2 fill="#1FBA79" color="#fff" size={32} />
-                          {/** @ts-ignore */}
-                          <span className="text-[#07052A] font-semibold text-base font-inter ">
-                            {
-                              //@ts-ignore
-                              userAccountInfo?.customer?.account?.name
-                            }
-                          </span>
-                        </div>
-                      ) : (
-                        //@ts-ignore
-                        userAccountInfo !== undefined ||
-                        //@ts-ignore
-                        (userAccountInfo.code !== "00" && (
-                          <div className="flex items-center gap p-2.5 gap-4 bg-red-50 rounded-[10px]">
-                            <CloseCircle fill="red" color="red" size={32} />
-                            {/** @ts-ignore */}
-                            <span className="text-[red] font-semibold text-base font-inter ">
-                              {
-                                //@ts-ignore
-                                userAccountInfo?.message
-                              }
-                            </span>
-                          </div>
-                        ))
-                      )}
+                      
                     </>
                   )}
                 </form>

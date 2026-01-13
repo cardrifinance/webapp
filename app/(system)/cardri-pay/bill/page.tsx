@@ -38,7 +38,10 @@ const BillPaymentType = () => {
     }
   };
 
-  return <div className="h-full overflow-y-auto mt-5">{renderContent()}</div>;
+  return <div className="h-full overflow-y-auto mt-5" style={{
+                    msOverflowStyle:'none',
+                    scrollbarWidth:'none'
+                  }}>{renderContent()}</div>;
 };
 
 export default BillPaymentType;

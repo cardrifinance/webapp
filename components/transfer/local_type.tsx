@@ -160,9 +160,17 @@ const TransferPage = () => {
           isBeneficiary: checked,
           m: 'web',
         });
-        console.log(response);
+      //  console.log(response);
 
-        if (response?.status) {
+        if (
+          //@ts-ignore
+          response?.response?.original?.data?.status === "SUCCESS") {
+            toast.success(
+            //@ts-ignore
+            `${response?.response?.original?.data?.message}` ||
+              'Transfer succesful'
+          );
+
           setStep(4);
           updateUrlParams({ step: '4' });
           setOpenDrawer(false);
@@ -295,8 +303,8 @@ const TransferPage = () => {
   };
 
   return (
-    <div className='w-full mt-4'>
-      <div className='min-h-[calc(100vh-125px)] w-full flex  overflow-auto lg:overflow-visible flex-col-reverse'>
+    <div className='w-full mt-4' >
+      <div className='min-h-[calc(100vh-125px)] w-full flex  overflow-auto lg:overflow-visible flex-col-reverse ' >
         <div className='w-full max-w-[640px] mx-auto px-0 sm:px-0 md:px-0 lg:px-0 flex flex-col gap-10'>
           {/* Title */}
           {step !== 4 && (
@@ -407,7 +415,7 @@ const TransferPage = () => {
               {/* Step 2 */}
               {step === 2 && (
                 <div className='flex flex-col gap-6'>
-                  <div className='py-3 px-4 bg-white border border-[#FAF7FF] rounded-[10px] flex items-center gap-3'>
+                  <div className='py-3 px-4 bg-white border border-[#FAF7FF] rounded-[10px] flex items-center gap-3' >
                     <Image
                       src={bankLogo}
                       alt={bankDetails?.bankName}

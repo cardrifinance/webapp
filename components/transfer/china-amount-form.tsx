@@ -3,12 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArchiveMinus, CloseCircle } from "iconsax-react";
 import {
-  ArrowLeft,
-  CheckCheckIcon,
-  CheckCircle2,
-  ChevronDown,
-  ChevronLeft,
-  InfoIcon,
+ 
   X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -189,7 +184,7 @@ const ChinaAmountForm = () => {
           //@ts-ignore
           toast.error(
             //@ts-ignore
-            e?.response?.data.Message ||
+            e?.response?.data.message ||
               "Could not complete transaction, try again"
           );
         }
@@ -204,9 +199,8 @@ const ChinaAmountForm = () => {
   const calculateNairaAmount = (amount: any) => {
     const numAmount = parseFloat(amount) || 0;
 
-    if (numAmount < 500) return 0; // Minimum amount not met
+    if (numAmount < 500) return 0; 
 
-    // Determine rate based on amount tier
     let rate;
     if (numAmount >= 500 && numAmount < 10000) {
       rate = data["Alipay5k-10k"] || 0;
@@ -222,9 +216,8 @@ const ChinaAmountForm = () => {
     // console.log(amount);
     const numAmount = parseFloat(amount) || 0;
 
-    if (numAmount < 500) return 0; // Minimum amount not met
+    if (numAmount < 500) return 0; 
 
-    // Determine rate based on amount tier
     let rate;
     if (numAmount >= 500 && numAmount < 10000) {
       rate = data["Alipay5k-10k"] || 0;
@@ -236,7 +229,6 @@ const ChinaAmountForm = () => {
 
     return numberWithCommas(rate);
   };
-  //console.log(paymentDetails);
 
   const ConfirmDrawer = ({ receiverAccountInfo, amount, narration }: any) => {
     const { data, loading, error, refresh } = useManagementData();

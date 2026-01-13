@@ -110,7 +110,7 @@ const TransactionLastStage = () => {
   const showTokenSection = type === "electricity";
 
   return (
-    <div className="w-full max-w-[640px] bg-white mx-auto rounded-tl-[42px] rounded-tr-[42px] flex flex-col gap-[42px] justify-center items-center lg:px-[72px] lg:pt-[64px]">
+    <div className="w-full max-w-[640px] bg-white mx-auto rounded-tl-[42px] rounded-tr-[42px] flex flex-col gap-[42px] justify-center items-center lg:px-[64x] lg:pt-[64px]">
       <div className="flex flex-col gap-4 items-center">
         <div className="flex flex-col gap-6 items-center mb-4">
           <Image
@@ -135,13 +135,7 @@ const TransactionLastStage = () => {
             You are paying for?
           </span>
           <div className="flex items-center gap-2">
-            <Image
-              src={networkImage(transaction?.network)}
-              alt="airtime"
-              width={20}
-              height={20}
-              className="w-5 h-5 rounded-full object-center"
-            />
+           
             <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6">
               {type === "local" ? "Local tranfer" : type}
             </span>
@@ -153,18 +147,18 @@ const TransactionLastStage = () => {
             <span className="text-[#474256] font-inter font-normal text-sm leading-6">
               Receiver
             </span>
-            <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6">
+            <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6 ">
               {transaction?.network || transaction?.phoneNumber || "N/A"}
             </span>
           </div>
         )}
         {showBankDetails && (
           <>
-            <div className="flex justify-between items-center w-full border border-[#B4ACCA1A] px-[10px] h-[50px]">
+            <div className="flex justify-between items-center w-full border border-[#B4ACCA1A] px-[10px] h-[50px] gap-2">
               <span className="text-[#474256] font-inter font-normal text-sm leading-6">
                 Receiver name
               </span>
-              <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6 text-end">
+              <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6 text-end truncate">
                 {transaction?.network || "N/A"}
               </span>
             </div>
@@ -172,7 +166,7 @@ const TransactionLastStage = () => {
               <span className="text-[#474256] font-inter font-normal text-sm leading-6">
                 Bank name
               </span>
-              <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6 text-end">
+              <span className="text-[#1B1B1B] font-inter font-semibold text-base leading-6 text-end truncate">
                 {transaction?.plan || "N/A"}
               </span>
             </div>

@@ -243,7 +243,7 @@ const IntraAfricaPage = () => {
             networkid: networkDetails.id,
             networkname: networkDetails.name,
             channelId: paymentDetails.id,
-            am: watch("amountToReceive"),
+            am: watch("amountToReceive").replaceAll(",",""),
             accountName: watch("fullname"),
             bank: paymentDetails.channelType,
             balanceType: paymentMethodDetails.value,
@@ -281,19 +281,26 @@ const IntraAfricaPage = () => {
           //   setPaymentMethodDetails(null);
         }
       } catch (e) {
-        console.log(e);
+        //@ts-ignore
+        console.log( e);
         //@ts-ignore
         if (e?.response?.data.success === "false 1") {
+           setOtp("")
           toast.error("Incorrect PIN");
         } else {
+           setOtp("")
           //@ts-ignore
           toast.error(
             //@ts-ignore
-            e?.response?.data.Message ||
+              e?.response?.data?.message ||
+            //@ts-ignore
+            e?.response?.data?.data?.message ||
               "Could not complete transaction, try again"
           );
+           setOpen(false)
         }
       } finally {
+      
         setOpenLoader(false);
         //  setOpen(false);
       }
