@@ -1,7 +1,20 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid bg-[red] grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]"></div>
-  );
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/stores/currentUserStore";
+
+export default function ProtectedPage() {
+  const router = useRouter();
+  const user = useUserStore((state) => state.user);
+
+  useEffect(() => {
+    if (!user) {
+      router.replace("/signin");
+    }
+  }, [user, router]);
+
+  if (!user) return null; // prevent UI flash
+
+  return <div>Protected content</div>;
 }

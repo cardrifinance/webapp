@@ -7,6 +7,8 @@ export interface UserData {
   lastName?: string;
   bvn?: string;
   nin?: string;
+  address?: string;
+  bvnstatus?: string;
 }
 
 export interface BeneficaiaryData {
