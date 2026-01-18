@@ -6,17 +6,7 @@ import { Check, IdCard } from "lucide-react";
 import { Building2, Home, ScanFace } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface VerificationStatus {
-  bvnVerified: boolean;
-  addressVerified: boolean;
-  livenessVerified: boolean;
-}
-
-interface Props {
-  status: VerificationStatus;
-}
-
-export default function LevelOneRequirements({ status }: Props) {
+export default function LevelOneRequirements() {
   const currentUser = useUserStore((state) => state.user);
   const router = useRouter();
 
